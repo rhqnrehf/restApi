@@ -6,6 +6,7 @@ import javax.validation.Valid;
 
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.hateoas.Link;
 import org.springframework.hateoas.MediaTypes;
 import org.springframework.hateoas.mvc.ControllerLinkBuilder;
 import org.springframework.http.ResponseEntity;
@@ -16,6 +17,8 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 import com.sun.source.doctree.LinkTree;
+
+import io.onshipping.demo.common.ErrorsResource;
 
 
 
@@ -32,15 +35,19 @@ public class EventController {
 		this.eventRepository = eventRepository;
 		this.eventValidator=eventValidator;
 	}
+	public ResponseEntity badRequest(Errors errors) {
+		return ResponseEntity.badRequest().body(new ErrorsResource(errors));
+	}
 	
 	@PostMapping
 	public ResponseEntity createEvent(@RequestBody @Valid EventDTO eventDTO,Errors errors) {
-	
+
 		if(errors.hasErrors())
-			return ResponseEntity.badRequest().build();
+			return badRequest(errors);
+		
 		eventValidator.validate(eventDTO, errors);
 		if(errors.hasErrors()) {
-			return ResponseEntity.badRequest().body(errors);
+			return badRequest(errors);
 		}
 		ModelMapper modelMapper = new ModelMapper();
 		Event event = modelMapper.map(eventDTO, Event.class);
@@ -52,6 +59,7 @@ public class EventController {
 		EventResource eventResource = new EventResource(event);
 		eventResource.add(ControllerLinkBuilder.linkTo(EventController.class).withRel("query-events"));
 		eventResource.add(selfLinkBuilder.withRel("update-event"));
+		eventResource.add(new Link("/docs/index.html#resources-events-create").withRel("profile"));
 		return ResponseEntity.created(createUri).body(eventResource);
 	}
 }

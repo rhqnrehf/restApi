@@ -61,7 +61,7 @@ public class EventControllerTests {
 
 	
 	
-	@Test
+	//@Test
 	public void createEvent() throws Exception{
 		EventDTO event = EventDTO.builder()
 				.name("Spring")
@@ -90,14 +90,12 @@ public class EventControllerTests {
 			.andExpect(jsonPath("free").value(false))
 			.andExpect(jsonPath("offline").value(true))
 			.andExpect(jsonPath("eventStatus").value(Matchers.not(EventStatus.PUBLISHED)))
-			.andExpect(jsonPath("_links.self").exists())
-			.andExpect(jsonPath("_links.query-events").exists())
-			.andExpect(jsonPath("_links.update-event").exists())
 			.andDo(document("create-event",
 					HypermediaDocumentation.links(
 							HypermediaDocumentation.linkWithRel("self").description("link to self"),
 							HypermediaDocumentation.linkWithRel("query-events").description("link to query events"),
-							HypermediaDocumentation.linkWithRel("update-event").description("link to update an existing event")
+							HypermediaDocumentation.linkWithRel("update-event").description("link to update an existing event"),
+							HypermediaDocumentation.linkWithRel("profile").description("link to profile an existing event")
 							),
 					HeaderDocumentation.requestHeaders(
 							HeaderDocumentation.headerWithName(HttpHeaders.ACCEPT).description("accept header"),
@@ -136,7 +134,8 @@ public class EventControllerTests {
 							PayloadDocumentation.fieldWithPath("eventStatus").description("event Status"),
 							PayloadDocumentation.fieldWithPath("_links.self.href").description("link"),
 							PayloadDocumentation.fieldWithPath("_links.query-events.href").description("link"),
-							PayloadDocumentation.fieldWithPath("_links.update-event.href").description("link")
+							PayloadDocumentation.fieldWithPath("_links.update-event.href").description("link"),
+							PayloadDocumentation.fieldWithPath("_links.profile.href").description("link")
 							)
 					));
 	}
@@ -193,7 +192,7 @@ public class EventControllerTests {
 		.andExpect(status().isBadRequest());
 	}
 	
-	//@Test
+	@Test
 	@TestDescription("정상적으로 이벤트를 생성하는 이벤트")
 	public void createEvent_Bad_Request_Empty_Wrong_Input() throws Exception {
 		EventDTO eventDTO = EventDTO.builder()
@@ -215,55 +214,12 @@ public class EventControllerTests {
 				.content(objectMapper.writeValueAsString(eventDTO)))
 		.andDo(print())
 		.andExpect(status().isBadRequest())
-		.andExpect(jsonPath("$[0].objectName").exists())
-		.andExpect(jsonPath("$[0].field").exists())
-		.andExpect(jsonPath("$[0].defaultMessage").exists())
-		.andExpect(jsonPath("$[0].code").exists())
-		.andExpect(jsonPath("$[0].rejectedValue").exists());
+		.andExpect(jsonPath("content[0].objectName").exists())
+		.andExpect(jsonPath("content[0].field").exists())
+		.andExpect(jsonPath("content[0].defaultMessage").exists())
+		.andExpect(jsonPath("content[0].code").exists())
+		.andExpect(jsonPath("content[0].rejectedValue").exists())
+		.andExpect(jsonPath("_links.index").exists());
 	}
 	
-	//@Test
-	public void testFree() {
-		Event event = Event.builder()
-				.basePrice(0)
-				.maxPrice(0)
-				.build();
-		event.update();
-		
-		assertThat(event.isFree()).isTrue();
-		
-		event = Event.builder()
-				.basePrice(100)
-				.maxPrice(0)
-				.build();
-		event.update();
-		
-		assertThat(event.isFree()).isFalse();
-		
-		event = Event.builder()
-				.basePrice(0)
-				.maxPrice(100)
-				.build();
-		event.update();
-		
-		assertThat(event.isFree()).isFalse();
-	}
-	
-	//@Test
-	public void testOffline() {
-		Event event = Event.builder()
-				.location("강남역 네이버 D2 스타텁 팩토리")
-				.build();
-		
-		event.update();
-		
-		assertThat(event.isOffline()).isTrue();
-		
-		event = Event.builder()
-				.build();
-		
-		event.update();
-		
-		assertThat(event.isOffline()).isFalse();
-	}
 }
