@@ -39,7 +39,7 @@ public class Event {
 	private int basePrice;
 	private int maxPrice;
 	private int limitOfEnrollment;
-	private boolean offLine;
+	private boolean offline;
 	private boolean free;
 	@Enumerated(EnumType.STRING)
 	private EventStatus eventStatus;
@@ -52,9 +52,9 @@ public class Event {
 		}
 		
 		if(this.location==null ||  this.location.isBlank()) {
-			this.offLine=false;
+			this.offline=false;
 		}else {
-			this.offLine = true;
+			this.offline = true;
 		}
 		
 	}

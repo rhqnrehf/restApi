@@ -44,7 +44,7 @@ public class WebMvcTest {
 			
 			event.update();
 			
-			assertThat(event.isOffLine()).isEqualTo(isOffLine);
+			assertThat(event.isOffline()).isEqualTo(isOffLine);
 
 		}
 		
