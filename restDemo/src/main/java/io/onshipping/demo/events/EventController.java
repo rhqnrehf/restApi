@@ -15,6 +15,8 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 
+import com.sun.source.doctree.LinkTree;
+
 
 
 @Controller
@@ -45,8 +47,11 @@ public class EventController {
 		event.update();
 		//event.setId(50);
 		eventRepository.save(event);
-
-		URI createUri = ControllerLinkBuilder.linkTo(EventController.class).slash("{id}").toUri();
-		return ResponseEntity.created(createUri).body(event);
+		ControllerLinkBuilder selfLinkBuilder = ControllerLinkBuilder.linkTo(EventController.class).slash("{id}");
+		URI createUri = selfLinkBuilder.toUri();
+		EventResource eventResource = new EventResource(event);
+		eventResource.add(ControllerLinkBuilder.linkTo(EventController.class).withRel("query-events"));
+		eventResource.add(selfLinkBuilder.withRel("update-event"));
+		return ResponseEntity.created(createUri).body(eventResource);
 	}
 }
