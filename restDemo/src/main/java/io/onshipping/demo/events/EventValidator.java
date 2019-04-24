@@ -9,9 +9,8 @@ import org.springframework.validation.Errors;
 public class EventValidator {
 
 	public void validate(EventDTO eventDTO,Errors errors) {
-		if(eventDTO.getMaxPrice()> eventDTO.getMaxPrice() && eventDTO.getMaxPrice() != 0) {
-			errors.rejectValue("basePrice","wrongValue","BasePrice is Wrong");
-			errors.rejectValue("maxProce","wrongValue","MaxPrice is Wrong");
+		if(eventDTO.getBasePrice()> eventDTO.getMaxPrice() && eventDTO.getMaxPrice() != 0) {
+			errors.reject("wrongPrices","Values fo prices are wrong");
 		}
 		LocalDateTime endEventDateTime = eventDTO.getEndEventDateTime();
 		if(endEventDateTime.isBefore(eventDTO.getBeginEventDateTime()) ||

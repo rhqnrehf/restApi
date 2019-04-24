@@ -43,4 +43,19 @@ public class Event {
 	private boolean free;
 	@Enumerated(EnumType.STRING)
 	private EventStatus eventStatus;
+	
+	public void update() {
+		if(this.basePrice==0 && maxPrice ==0) {
+			this.free=true;
+		}else {
+			this.free = false;
+		}
+		
+		if(this.location==null ||  this.location.isBlank()) {
+			this.offLine=false;
+		}else {
+			this.offLine = true;
+		}
+		
+	}
 }
