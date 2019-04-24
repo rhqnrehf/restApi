@@ -6,6 +6,7 @@ import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
+import javax.persistence.Id;
 
 import org.springframework.stereotype.Service;
 
@@ -25,6 +26,7 @@ import lombok.Setter;
 @Entity
 public class Event {
 	@GeneratedValue
+	@Id
 	private Integer id;
 	
 	private String name;
