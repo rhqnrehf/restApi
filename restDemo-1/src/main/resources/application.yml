@@ -1,0 +1,68 @@
+spring :
+  profiles :
+    active : local
+---
+
+spring : #local
+  profiles : local
+  datasource :
+    url : jdbc:mysql://localhost:3306/root?characterEncoding=UTF-8&serverTimezone=UTC
+    username : root
+    password : root
+  jpa :
+    show-sql : true
+    properties:
+      hibernate.format_sql: true     
+    database-platform : org.hibernate.dialect.MySQL5InnoDBDialect
+    hibernate :
+      ddl-auto : create
+  mvc:
+    view:
+      prefix : /WEB-INF/jsp/ 
+      suffix : .jsp      
+  session:
+    timeout: 14400
+handlebars.cache : false   
+mybatis:
+    mapper-locations : mapper/*.xml
+---
+
+spring : #dev
+  profiles : dev
+  datasource :
+    url : jdbc:mariadb://onshipping.czz99ueegv5g.ap-northeast-2.rds.amazonaws.com:3306/onshipping
+    username : onshipping
+    password : 2019Onshipping!
+  jpa :
+    show-sql : true  
+    database-platform : org.hibernate.dialect.MySQL5InnoDBDialect
+    hibernate :
+      ddl-auto : update
+      naming : 
+        physical-strategy : com.oninsure.onshipping.util.PhysicalNamingStrategyImpl
+  mvc:
+    view:
+      prefix : /WEB-INF/jsp/ 
+      suffix : .jsp      
+  session:
+    timeout: 14400
+handlebars.cache : false   
+mybatis:
+    mapper-locations : mapper/*.xml  
+--- 
+spring : #prod
+  profiles : prod
+  datasource :
+    url : jdbc:mariadb://onshipping-prod.czz99ueegv5g.ap-northeast-2.rds.amazonaws.com:3306/onshipping
+    username : onshipping
+    password : 2019Onshipping!
+  jpa :
+    database-platform : org.hibernate.dialect.MySQL5InnoDBDialect
+    hibernate :
+      ddl-auto : update
+      naming : 
+        physical-strategy : com.oninsure.onshipping.util.PhysicalNamingStrategyImpl
+  session:
+    timeout: 14400        
+mybatis:
+    mapper-locations : mapper/*.xml        
