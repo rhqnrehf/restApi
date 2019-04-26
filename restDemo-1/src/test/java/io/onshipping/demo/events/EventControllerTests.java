@@ -2,6 +2,7 @@ package io.onshipping.demo.events;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document;
+import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.httpBasic;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
@@ -12,6 +13,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 
 import java.time.LocalDateTime;
+import java.util.Set;
 import java.util.stream.IntStream;
 
 import org.hamcrest.Matcher;
@@ -43,14 +45,20 @@ import org.springframework.restdocs.headers.RequestHeadersSnippet;
 import org.springframework.restdocs.hypermedia.HypermediaDocumentation;
 import org.springframework.restdocs.payload.PayloadDocumentation;
 import org.springframework.restdocs.snippet.Snippet;
+import org.springframework.security.oauth2.common.util.Jackson2JsonParser;
 import org.springframework.stereotype.Component;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.ResultActions;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
+import io.onshipping.demo.accounts.Account;
+import io.onshipping.demo.accounts.AccountRole;
+import io.onshipping.demo.accounts.AccountService;
+import io.onshipping.demo.common.AppProperties;
 import io.onshipping.demo.common.BaseControllerTest;
 import io.onshipping.demo.common.RestDocsConfiguration;
 import io.onshipping.demo.common.TestDescription;
@@ -59,6 +67,11 @@ public class EventControllerTests extends BaseControllerTest{
 	
 	@Autowired
 	private EventRepository eventRepository;
+	@Autowired
+	private AccountService accountService;
+	
+	@Autowired
+	AppProperties appProperties;
 
 	@Test
 	public void createEvent() throws Exception{
@@ -76,6 +89,7 @@ public class EventControllerTests extends BaseControllerTest{
 				.build();
 
 		mockMvc.perform(post("/api/events/")
+				.header(HttpHeaders.AUTHORIZATION,"Bearer "+getAccessToken())
 				.contentType(MediaType.APPLICATION_JSON_UTF8)
 				.accept(MediaTypes.HAL_JSON)
 				.content(objectMapper.writeValueAsString(event))
@@ -142,33 +156,23 @@ public class EventControllerTests extends BaseControllerTest{
 	
 	
 	
-	//@Test
-	public void badRequest() throws JsonProcessingException, Exception {
-		Event event = Event.builder()
-				.id(100)
-				.name("Spring")
-				.description("REST API Development with Spring")
-				.beginEnrollmentDateTime(LocalDateTime.of(2018, 11, 23, 14, 21))
-				.closeEnrollmentDateTime(LocalDateTime.of(2018, 11, 24, 14, 21))
-				.beginEventDateTime(LocalDateTime.of(2018,11,25,14,21))
-				.endEventDateTime(LocalDateTime.of(2018,11,26,14,21))
-				.basePrice(100)
-				.maxPrice(200)
-				.limitOfEnrollment(100)
-				.location("강남역 D2 스타텁 팩토리")
-				.free(true)
-				.offline(false)
-				.eventStatus(EventStatus.PUBLISHED)
-				.build();
+	private String getAccessToken() throws Exception {
+		String username = "keesun@email.com";
+		String password = "keesun";
 
-		mockMvc.perform(post("/api/events")
-				.contentType(MediaType.APPLICATION_JSON_UTF8)
-				.accept(MediaTypes.HAL_JSON)
-				.content(objectMapper.writeValueAsString(event)))
-				.andDo(print())
-				.andExpect(jsonPath("free").value(false))
-				.andExpect(jsonPath("offline").value(true));
+
+		
+		ResultActions perform = mockMvc.perform(post("/oauth/token")
+				.with(httpBasic(appProperties.getClientId(), appProperties.getClientSecret()))
+				.param("username", username)
+				.param("password", password)
+                .param("grant_type", "password"));
+		var responseBody = perform.andReturn().getResponse().getContentAsString();
+		Jackson2JsonParser parse = new Jackson2JsonParser();
+		return parse.parseMap(responseBody).get("access_token").toString();
+		
 	}
+
 	
 	//@Test
 	public void createEvent_Bad_Request_Empty_Input() throws Exception {
