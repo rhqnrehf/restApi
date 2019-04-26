@@ -16,6 +16,7 @@ import org.springframework.security.oauth2.config.annotation.web.configuration.E
 import org.springframework.security.oauth2.config.annotation.web.configurers.AuthorizationServerEndpointsConfigurer;
 import org.springframework.security.oauth2.config.annotation.web.configurers.AuthorizationServerSecurityConfigurer;
 import org.springframework.security.oauth2.provider.token.TokenStore;
+import org.springframework.security.oauth2.provider.token.store.JdbcTokenStore;
 
 import io.onshipping.demo.accounts.AccountService;
 import io.onshipping.demo.common.AppProperties;
@@ -36,6 +37,9 @@ public class AuthServerConfig extends AuthorizationServerConfigurerAdapter{
 	
 	@Autowired
 	TokenStore tokenStore;
+	
+	@Autowired
+	DataSource dataSource;
 	@Autowired
 	AppProperties appProperties;
 

@@ -30,12 +30,18 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter{
 	
 	@Autowired
 	PasswordEncoder passwordEncoder;
-	
 
-    @Bean
+	
+   /* @Bean
     public TokenStore tokenStore() {
         return new InMemoryTokenStore();
+    }*/
+    
+    @Bean
+    public TokenStore tokenStore(@Autowired DataSource dataSource) {
+    	return new JdbcTokenStore(dataSource);
     }
+
 	
 	
 	@Bean
