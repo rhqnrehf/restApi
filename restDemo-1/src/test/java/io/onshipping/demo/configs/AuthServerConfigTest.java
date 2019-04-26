@@ -43,7 +43,6 @@ public class AuthServerConfigTest extends BaseControllerTest{
 				.roles(Set.of(AccountRole.ADMIN,AccountRole.USER))
 				.build();
 		accountService.saveAccount(account);
-
 		
 		mockMvc.perform(post("/oauth/token")
 				.with(httpBasic(appProperties.getClientId(), appProperties.getClientSecret()))

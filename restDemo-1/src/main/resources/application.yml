@@ -15,7 +15,8 @@ spring : #local
       hibernate.format_sql: true     
     database-platform : org.hibernate.dialect.MySQL5InnoDBDialect
     hibernate :
-      ddl-auto : update
+      ddl-auto : create
+      
   mvc:
     view:
       prefix : /WEB-INF/jsp/ 
