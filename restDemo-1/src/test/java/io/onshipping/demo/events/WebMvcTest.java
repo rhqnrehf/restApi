@@ -10,8 +10,6 @@ import junitparams.JUnitParamsRunner;
 import junitparams.Parameters;
 
 @RunWith(JUnitParamsRunner.class)
-
-
 public class WebMvcTest {
 		@Test
 		@Parameters(method="parametersForTestFree")

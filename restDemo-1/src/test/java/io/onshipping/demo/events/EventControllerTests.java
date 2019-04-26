@@ -44,37 +44,23 @@ import org.springframework.restdocs.hypermedia.HypermediaDocumentation;
 import org.springframework.restdocs.payload.PayloadDocumentation;
 import org.springframework.restdocs.snippet.Snippet;
 import org.springframework.stereotype.Component;
+import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
+import io.onshipping.demo.common.BaseControllerTest;
 import io.onshipping.demo.common.RestDocsConfiguration;
 import io.onshipping.demo.common.TestDescription;
-import io.onshipping.demo.repository.EventRepository;
 
-@RunWith(SpringRunner.class)
-@SpringBootTest
-@AutoConfigureMockMvc
-@AutoConfigureRestDocs
-@AutoConfigureTestDatabase(replace=Replace.NONE)
-@Import(RestDocsConfiguration.class)
-public class EventControllerTests {
-	@Autowired
-	MockMvc mockMvc;
+public class EventControllerTests extends BaseControllerTest{
 	
-	@Autowired
-	ObjectMapper objectMapper;
-
 	@Autowired
 	private EventRepository eventRepository;
-	
-	@Autowired
-	private ModelMapper modelMapper;
-	
-	
-	//@Test
+
+	@Test
 	public void createEvent() throws Exception{
 		EventDTO event = EventDTO.builder()
 				.name("Spring")
@@ -140,6 +126,7 @@ public class EventControllerTests {
 							PayloadDocumentation.fieldWithPath("endEventDateTime").description("date time of end of new event"),
 							PayloadDocumentation.fieldWithPath("location").description("location of new event"),
 							PayloadDocumentation.fieldWithPath("basePrice").description("base price of new event"),
+							PayloadDocumentation.fieldWithPath("manager").description("identifier of new event"),
 							PayloadDocumentation.fieldWithPath("maxPrice").description("max price of new event"),
 							PayloadDocumentation.fieldWithPath("limitOfEnrollment").description("limit of new event"),
 							PayloadDocumentation.fieldWithPath("free").description("it tells if this event is free or not"),
@@ -173,13 +160,14 @@ public class EventControllerTests {
 				.offline(false)
 				.eventStatus(EventStatus.PUBLISHED)
 				.build();
-		//Mockito.when(eventRepository.save(event)).thenReturn(event);
+
 		mockMvc.perform(post("/api/events")
 				.contentType(MediaType.APPLICATION_JSON_UTF8)
 				.accept(MediaTypes.HAL_JSON)
 				.content(objectMapper.writeValueAsString(event)))
 				.andDo(print())
-				.andExpect(status().isBadRequest());
+				.andExpect(jsonPath("free").value(false))
+				.andExpect(jsonPath("offline").value(true));
 	}
 	
 	//@Test
@@ -278,7 +266,7 @@ public class EventControllerTests {
 	}
 
 	
-	@Test
+	//@Test
 	@TestDescription("이벤트를 수정하기")
 	public void updateEvent1() throws Exception {
 		Event event = this.generateEvent(200);
@@ -297,7 +285,7 @@ public class EventControllerTests {
 			.andDo(document("update-event"));
 	}
 	
-	@Test
+	//@Test
 	@TestDescription("입력값이 비어있는 경우에 이벤트 수정 실패")
 	public void updateEvent400_Empty() throws Exception {
 		Event event = this.generateEvent(200);
@@ -311,7 +299,7 @@ public class EventControllerTests {
 			.andExpect(status().isBadRequest());
 	}
 	
-	@Test
+	//@Test
 	@TestDescription("입력값이 잘못되어있는 경우에 이벤트 수정 실패")
 	public void updateEvent400_Wrong() throws Exception {
 		Event event = this.generateEvent(200);
@@ -326,7 +314,7 @@ public class EventControllerTests {
 			.andExpect(status().isBadRequest());
 	}
 	
-	@Test
+	//@Test
 	@TestDescription("존재하지 않는 이벤트 수정실패")
 	public void updateEvent404() throws Exception {
 		Event event = this.generateEvent(200);

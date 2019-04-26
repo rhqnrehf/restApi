@@ -1,4 +1,4 @@
-package io.onshipping.demo.repository;
+package io.onshipping.demo.events;
 
 public interface EventRepository extends EventDefaultRepository {
 

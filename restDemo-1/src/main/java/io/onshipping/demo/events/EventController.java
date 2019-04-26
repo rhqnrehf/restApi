@@ -29,7 +29,6 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import io.onshipping.demo.common.ErrorsResource;
-import io.onshipping.demo.repository.EventRepository;
 
 
 
@@ -41,9 +40,6 @@ public class EventController {
 	private final EventRepository eventRepository;
 
 	private final EventValidator eventValidator;
-	
-	@Autowired
-	ObjectMapper objectMapper;
 	@Autowired
 	ModelMapper modelMapper;
 	
@@ -65,7 +61,6 @@ public class EventController {
 		ModelMapper modelMapper = new ModelMapper();
 		Event event = modelMapper.map(eventDTO, Event.class);
 		event.update();
-		//event.setId(50);
 		eventRepository.save(event);
 		ControllerLinkBuilder selfLinkBuilder = ControllerLinkBuilder.linkTo(EventController.class).slash("{id}");
 		URI createUri = selfLinkBuilder.toUri();

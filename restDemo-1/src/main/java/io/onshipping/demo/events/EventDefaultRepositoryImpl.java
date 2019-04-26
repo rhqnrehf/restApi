@@ -1,10 +1,8 @@
-package io.onshipping.demo.repository;
+package io.onshipping.demo.events;
 
 import javax.persistence.EntityManager;
 
 import org.springframework.data.jpa.repository.support.SimpleJpaRepository;
-
-import io.onshipping.demo.events.Event;
 
 
 public class EventDefaultRepositoryImpl extends SimpleJpaRepository<Event, Integer> implements EventDefaultRepository{

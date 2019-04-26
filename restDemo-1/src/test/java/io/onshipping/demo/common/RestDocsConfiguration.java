@@ -16,10 +16,6 @@ public class RestDocsConfiguration {
 				.withResponseDefaults(Preprocessors.prettyPrint());
 		}
 	
-	@Bean
-	public ModelMapper modelMapper() {
-		return new ModelMapper();
-	}
 	
 	
 }
