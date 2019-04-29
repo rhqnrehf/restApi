@@ -73,7 +73,7 @@ public class EventControllerTests extends BaseControllerTest{
 	@Autowired
 	AppProperties appProperties;
 
-	@Test
+	//@Test
 	public void createEvent() throws Exception{
 		EventDTO event = EventDTO.builder()
 				.name("Spring")
@@ -89,7 +89,7 @@ public class EventControllerTests extends BaseControllerTest{
 				.build();
 
 		mockMvc.perform(post("/api/events/")
-				.header(HttpHeaders.AUTHORIZATION,"Bearer "+getAccessToken())
+				.header(HttpHeaders.AUTHORIZATION,"Bearer "/*+getAccessToken()*/)
 				.contentType(MediaType.APPLICATION_JSON_UTF8)
 				.accept(MediaTypes.HAL_JSON)
 				.content(objectMapper.writeValueAsString(event))
@@ -156,9 +156,10 @@ public class EventControllerTests extends BaseControllerTest{
 	
 	
 	
-	private String getAccessToken() throws Exception {
-		String username = "keesun@email.com";
-		String password = "keesun";
+	@Test
+	public void getAccessToken() throws Exception {
+		String username = "keesun@email.commm";
+		String password = "keesun123";
 
 
 		
@@ -169,7 +170,9 @@ public class EventControllerTests extends BaseControllerTest{
                 .param("grant_type", "password"));
 		var responseBody = perform.andReturn().getResponse().getContentAsString();
 		Jackson2JsonParser parse = new Jackson2JsonParser();
-		return parse.parseMap(responseBody).get("access_token").toString();
+		String jsonString  = parse.parseMap(responseBody).get("access_token").toString();
+		System.out.println(jsonString);
+		//return parse.parseMap(responseBody).get("access_token").toString();
 		
 	}
 

@@ -35,8 +35,8 @@ public class AuthServerConfigTest extends BaseControllerTest{
 	@Test
 	@TestDescription("인증 토큰을 발급받는 테스트")
 	public void getAuthToken() throws Exception {
-		String username = "keesun@email.com";
-		String password = "keesun";
+		String username = "keesun@email.commm";
+		String password = "keesun123";
 		Account account = Account.builder()
 				.email(username)
 				.password(password)
